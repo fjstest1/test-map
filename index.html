@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>ArcGIS API for JavaScript Tutorials: Display a map</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.18/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.18/"></script>
+    <script>
+      function LoadPage() {
+        require([
+          "esri/config",
+          "esri/Map",
+          "esri/views/MapView",
+          "esri/Graphic",
+          "esri/layers/GraphicsLayer",
+        ], function (esriConfig, Map, MapView, Graphic, GraphicsLayer) {
+          var long = document.getElementById("long").value;
+          var lat = document.getElementById("lat").value;
+          esriConfig.apiKey =
+            "AAPK566c65c60d1144d2bbb5e694e56930767PABtvPuL9c7CinfzXp36P6UlS22QBIkEpuwJzaJQPaavJTcSSC97RNfI-q2q4fi";
+
+          const map = new Map({
+            basemap: "arcgis-topographic", // Basemap layer service
+          });
+
+          const view = new MapView({
+            map: map,
+            center: [long, lat], // Longitude, latitude
+            zoom: 18, // Zoom level
+            container: "viewDiv", // Div element
+          });
+
+          const graphicsLayer = new GraphicsLayer();
+          map.add(graphicsLayer);
+
+          const point = {
+            //Create a point
+            type: "point",
+            longitude: long,
+            latitude: lat,
+          };
+          const simpleMarkerSymbol = {
+            type: "simple-marker",
+            color: [226, 119, 40], // Orange
+            outline: {
+              color: [255, 255, 255], // White
+              width: 1,
+            },
+            size: 20,
+            text: "CBT",
+          };
+
+          const textSymbol = {
+            type: "text",
+            text: "CBT",
+            angle: 2,
+          };
+
+          const popupTemplate = {
+            title: "{Name}",
+            content: "{Description}",
+          };
+          const attributes = {
+            Name: "Chợ Bến Thành",
+            Description: "Chợ Bến Thành là chợ ở vị trí trung tâm Tp HCM",
+          };
+
+          const pointGraphic = new Graphic({
+            geometry: point,
+            symbol: simpleMarkerSymbol,
+            attributes: attributes,
+            popupTemplate: popupTemplate,
+          });
+          graphicsLayer.add(pointGraphic);
+        });
+      }
+
+    </script>
+  </head>
+
+  <body onload="LoadPage()">
+    <div class="form">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Latitude</span>
+        <input type="number" class="form-control" id="lat" value="10.7721095" />
+        <span class="input-group-text">Longitude</span>
+        <input type="number" class="form-control" id="long" value="106.6982784" />
+        <button class="btn btn-primary" onclick="LoadPage()">Go</button>
+      </div>
+    </div>
+    <div id="viewDiv"></div>
+  </body>
+</html>
